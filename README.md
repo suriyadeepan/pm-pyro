@@ -2,13 +2,6 @@
 
 PyMC3-like abstractions for pyro. 
 
-- Define Model
-- Select Inference Method
-- Get latent variables
-- Get samples from posterior
-- Plot Posterior
-- Plot Posterior Predictive
-
 
 ## Setup
 
@@ -18,15 +11,20 @@ pip install pm-pyro
 
 ## Example
 
-Data
+### Data
+
 
 ![](images/plot_data.png)
 
-Model Specification
+
+### Model Specification
+
 
 ![](images/stfn.png)
 
-Stochastic Function
+
+
+### Stochastic Function
 
 ```python
 def pyro_model(x1, x2, y):
@@ -41,7 +39,7 @@ def pyro_model(x1, x2, y):
     return pyro.sample('y_obs', pdist.Normal(mu, sigma), obs=y)
 ```
 
-Context-manager Syntax
+### Context-manager Syntax
 
 ```python
 from pmpyro import pm_like
@@ -55,7 +53,7 @@ with pm_like(pyro_model, X1, X2, Y) as model:
 sample: 100%|██████████| 1300/1300 [00:16, 80.42it/s, step size=7.49e-01, acc. prob=0.911] 
 ```
 
-Traceplot
+### Traceplot
 
 ```python
 pm.traceplot(trace)
@@ -63,7 +61,7 @@ pm.traceplot(trace)
 
 ![](images/traceplot.png)
 
-Plot Posterior
+### Plot Posterior
 
 ```python
 pm.plot_posterior(trace, var_names=['beta'])
@@ -71,7 +69,7 @@ pm.plot_posterior(trace, var_names=['beta'])
 
 ![](images/posterior_plot.png)
 
-Posterior Predictive Samples
+### Posterior Predictive Samples
 
 ```python
 ppc = pm.plot_posterior_predictive(X1, X2, None,
@@ -83,7 +81,7 @@ ppc = pm.plot_posterior_predictive(X1, X2, None,
 ![](images/ppc2.png)
 
 
-Trace Summary
+### Trace Summary
 
 ```python
 pm.summary()
