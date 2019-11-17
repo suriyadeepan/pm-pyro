@@ -89,4 +89,4 @@ Trace Summary
 pm.summary()
 ```
 
-![](images/trac_summary.png)
+![](images/trace_summary.png)
