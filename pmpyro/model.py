@@ -60,6 +60,12 @@ class PmlikeModel(Context):
     self.variables.append(var)
     setattr(self, var.name, var)
 
+  def observed_variables(self):
+    return [ var for var in self.variables if var.is_observed ]
+
+  def free_variables(self):
+    return [ var for var in self.variables if not var.is_observed ]
+
 
 def get_trace(stfn, *data):
   # get trace of sample sites
