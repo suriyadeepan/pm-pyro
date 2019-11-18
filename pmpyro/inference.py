@@ -1,6 +1,7 @@
 """pmpyro/inference.py
 
-Collection of Inference methods. Sampling-based methods like NUTS and HMC are available. Pyro's Stochastic Variational Inference is also available.
+Collection of Inference methods.
+Sampling-based methods like NUTS and HMC are available. Pyro's Stochastic Variational Inference is also available.
 """
 from pyro.infer.autoguide import AutoDiagonalNormal
 from pyro.infer.mcmc.util import predictive
