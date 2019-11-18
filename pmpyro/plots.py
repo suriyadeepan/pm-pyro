@@ -1,3 +1,7 @@
+"""pmpyro/plots.py
+
+Tools for managing and plotting traces.
+"""
 from pmpyro.inference import sample_posterior_predictive
 from pmpyro.inference import disentangle_trace
 from pmpyro.tensor_ops import *
@@ -9,6 +13,7 @@ import pymc3 as pm
 import torch
 
 
+"""Configuration for matplotlib"""
 # Plot style
 plt.style.use('ggplot')
 # Color Palette
@@ -32,6 +37,11 @@ mpl.rcParams['figure.figsize'] = (10.0, 8.0)
 
 
 def resolve_var_names(var_names, trace, vectors):
+  """Break down vector valued variables `vectors` in `trace` into multiple scalars.
+
+  Eg : `{ 'beta' : [ [0.7, 2.3], [ ... ], .. ] }` resolves to `{ 'beta_0' : [ 0.7, ... ], 'beta_1' : [ 2.3, ... ] }
+
+  """
   if var_names is None:
     return None
   for name in var_names:
@@ -46,28 +56,48 @@ def resolve_var_names(var_names, trace, vectors):
 
 
 def traceplot(trace, *args, **kwargs):
+  """Resolves variables in trace and plot trace"""
+  # convert vector-valued variables into multiple scalars
   trace, vectors = disentangle_trace(trace)
+  # resolve variable names
   var_names = resolve_var_names(kwargs.get('var_names'), trace, vectors)
   if var_names is not None:
     kwargs['var_names'] = var_names
-  pm.traceplot(trace, *args, **kwargs)
+  pm.traceplot(trace, *args, **kwargs)  # `pymc3.traceplot`
 
 
 def plot_posterior(trace, *args, **kwargs):
+  """Plot posterior of random variables.
+
+  Default behaviour is to plot all random variables.
+  Variables can be selectively plotted by mentioning them in `var_names` argument.
+  """
+  # convert vector-valued variables into multiple scalars
   trace, vectors = disentangle_trace(trace)
+  # resolve variable names
   var_names = resolve_var_names(kwargs.get('var_names'), trace, vectors)
   if var_names is not None:
     kwargs['var_names'] = var_names
-  pm.plot_posterior(trace, *args, **kwargs)
+  pm.plot_posterior(trace, *args, **kwargs)  # `pymc3.traceplot`
 
 
 def make_ppc_legend():
-  ppc = mpatches.Patch(color=PYRO_ORANGE, alpha=0.65, label='Posterior Predictive')
-  obs = mpatches.Patch(color=PM_BLUE, alpha=0.65, label='Observations')
+  """Helper to make ppc plot legend"""
+  ppc = mpatches.Patch(color=PYRO_ORANGE, alpha=0.65,
+      label='Posterior Predictive')
+  obs = mpatches.Patch(color=PM_BLUE, alpha=0.65,
+      label='Observations')
   plt.legend(handles=[ppc, obs])
 
 
 def plot_posterior_predictive(*args, **kwargs):
+  """Plot Posterior Predictive samples.
+
+  Set transparency using `alpha`.
+  Optionally observations can be plotted using `obs` dictionary.
+  Data are passed as positional arguments which will be used in `pmpyro.inference.sample_posterior_predictive`.
+  Additional keyword arguments to `pmpyro.inference.sample_posterior_predictive` are required.
+  """
   # get alpha and obs from kwargs
   alpha = kwargs.get('alpha', 0.01)
   obs = kwargs.get('obs', {})

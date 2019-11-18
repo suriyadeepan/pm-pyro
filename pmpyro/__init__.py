@@ -6,13 +6,13 @@ from pmpyro.plots import traceplot, plot_posterior
 from pmpyro.plots import plot_posterior_predictive
 
 __all__ = [
-    sample,
     sample_posterior_predictive,
-    summary, 
-    pm_like,
-    traceplot,
-    plot_posterior,
     plot_posterior_predictive,
-    fit,
-    sample_variational
+    sample_variational,
+    plot_posterior,
+    traceplot,
+    pm_like,
+    summary, 
+    sample,
+    fit
     ]

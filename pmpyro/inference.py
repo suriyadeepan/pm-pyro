@@ -1,4 +1,8 @@
-from pyro.contrib.autoguide import AutoDiagonalNormal
+"""pmpyro/inference.py
+
+Collection of Inference methods. Sampling-based methods like NUTS and HMC are available. Pyro's Stochastic Variational Inference is also available.
+"""
+from pyro.infer.autoguide import AutoDiagonalNormal
 from pyro.infer.mcmc.util import predictive
 from pyro.infer.mcmc import NUTS, MCMC, HMC
 import pyro
@@ -12,7 +16,17 @@ from tqdm import trange
 import os
 
 
-def sample(draws=500, model=None, warmup_steps=None, num_chains=1, kernel='nuts'):
+def sample(draws=500, model=None,
+    warmup_steps=None, num_chains=1, kernel='nuts'):
+  """Markov-chain Monte Carlo sampling.
+
+  Sampling should be run within the context of a model or the model should be passed as an argument `model` explicitly.
+  Number of samples is given by `draws` which defaults to `500`.
+  Warm-up steps are assumed to be 30% of sample count.
+  MCMC kernel can be selected by setting `kernel`. `hmc` and `nuts` are available.
+  `pmpyro.inference.sample` returns a trace of samples
+
+  """
   # get model from context
   if model is None:
     model = Context.get_context()
@@ -37,6 +51,10 @@ def sample(draws=500, model=None, warmup_steps=None, num_chains=1, kernel='nuts'
 
 
 def disentangle_trace(trace):
+  """Separate vector-valued variable traces into multiple appropriatedly named scalars.
+
+  Returns the updated trace and a list of vector-valued variable names.
+  """
   updated_trace = {}
   num_samples = count_samples(trace)
   vectors = []
@@ -59,6 +77,13 @@ def disentangle_trace(trace):
 
 
 def entangle_trace(trace, variables):
+  """Combine disentangled variables into their original vector-valued states
+
+  `trace` is a python dictionary of disentangled variable traces.
+  `variables` is a list of free variables from the model. 
+
+  `pmpyro.inference.entangle_trace` returns an entangled trace.
+  """
   dvars, vectors = disentangle_variables(variables)
   vec_vars = []
   for vector in vectors:
@@ -73,6 +98,13 @@ def entangle_trace(trace, variables):
 
 
 def sample_posterior_predictive(*args, trace=None, samples=100, model=None):
+  """Generate Posterior Predictive samples given new data points
+  
+  Data are given a positional arguments in `args`.
+  `trace` from sampling or variational inference is required.
+  Number of samples to generate is given by `samples`.
+  The function should be run within the context of the model or a model should be explicitly passed as an argument `model`.
+  """
   if trace is None:  # check for a valid trace
     raise Exception(f'Need a valid trace; got trace={trace} instead!')
   if model is None:  # get model from context if necessary
@@ -88,14 +120,24 @@ def sample_posterior_predictive(*args, trace=None, samples=100, model=None):
 
 
 def summary(trace, burn_in=0):
-  num_samples = count_samples(trace)
-  if burn_in > 0:
+  """Summary of Random Variables from the `trace`
+  
+  `burn_in` period ignores the initial super-noisy samples.
+  """
+  num_samples = count_samples(trace)  # count the samples in trace
+  if burn_in > 0:  # if there is burn-in period, filter out those samples
     trace = get_last_n_from_trace(trace, num_samples - burn_in)
-  trace, _ = disentangle_trace(trace)
-  return az.summary(trace)
+  trace, _ = disentangle_trace(trace)  # get disentangle_trace for summary
+  return az.summary(trace)  # use arviz's summary function
 
 
 def fit(model=None, lr=1e-2, epochs=10000, autoguide=None):
+  """Wrapper to pyro's SVI (Stochastic Variation Inference) inference engine.
+
+  Requires to be run within a model's context or a model to be passed explicitly via `model`.
+  The Variational Family of distributions (guide) can be set via `autoguide`. By default Diagonal Normal family is chosen.
+  Control optimization by using the arguments `lr` and `epochs`
+  """
   if model is None:
     model = Context.get_context()
   stfn = model.stfn  # get stochastic function from model
@@ -129,24 +171,34 @@ def fit(model=None, lr=1e-2, epochs=10000, autoguide=None):
 
 
 def disentangle_variables(variables):
+  """Create multiple scalar variables names to replace vector-values variable names.
+
+  `variables` is a list of free variables associated with the model.
+  """
   dvars, vectors = [], {}
   for var in variables:
-    dims = var_dim(var)
-    if dims == 1:
+    dims = var_dim(var)  # get the shape of the variable
+    if dims == 1:  # if it is a scalar
       dvars.append(var.name)
-    else:
+    else:  # if it is a vector
       vectors[var.name] = []
       for i in range(dims):
-        dvars.append(f'{var.name}_{i}')
-        vectors[var.name].append(dvars[-1])
+        dvars.append(f'{var.name}_{i}')  # add created scalar
+        vectors[var.name].append(dvars[-1])  # track the vector-valued vars
   return dvars, vectors
 
 
 def sample_variational(vardist, samples=100, model=None):
+  """Generate samples from the variational distribution.
+  
+  `vardist` is a variational family of distributions.
+  Requires to be run within a model's context or a model to be passed explicitly via `model`.
+  Number of samples to generate is given by `samples`.
+  """
   if model is None:
     model = Context.get_context()
-  psamples = vardist.sample([samples, ])
-  psamples = psamples.transpose(1, 0)
+  psamples = vardist.sample([samples, ])  # sample from variational dist
+  psamples = psamples.transpose(1, 0)  # [ d, n ] -> [ n, d ]
   dfvars, vectors = disentangle_variables(model.free_variables())
   # disentangled trace
   dtrace = { var : psample for var, psample in zip(dfvars, psamples) }
