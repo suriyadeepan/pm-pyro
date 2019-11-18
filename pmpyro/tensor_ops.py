@@ -12,3 +12,12 @@ def to_tensor(*args):
 
 def numpy(t):
   return t.cpu().detach().numpy()
+
+
+def var_dim(var):
+  shape = var.fn.shape()
+  if len(shape) == 0:
+    return 1
+  if len(shape) > 1:
+    raise Exception(f'Cannot handle high-dimensional variable {var}')
+  return shape[0]
