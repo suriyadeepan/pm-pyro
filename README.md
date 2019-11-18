@@ -17,7 +17,7 @@ python -m pytest pmpyro/tests.py
 
 ## Example
 
-Borrowed this example from a [PyMC3 tutorial](https://docs.pymc.io/notebooks/getting_started.html). Outcome variables `Y` is dependent on 2 features `X_1` and `X_2`.
+Borrowed this example from a [PyMC3 tutorial](https://docs.pymc.io/notebooks/getting_started.html). Outcome variables `Y` is dependent on 2 features `X_1` and `X_2`. The notebook for this example is available [here](notebooks/motivating-example.ipynb)
 
 ![](images/plot_data.png)
 
@@ -33,16 +33,20 @@ We design a simple Bayesian Linear Regression model.
 The model specification is implemented as a stochastic function.
 
 ```python
+import pyro.distributions as dist
+import pyro
+import torch
+
 def pyro_model(x1, x2, y):
-    alpha = pyro.sample('alpha', pdist.Normal(0, 10))
-    beta = pyro.sample('beta', pdist.Normal(torch.zeros(2,), torch.ones(2,) * 10.))
-    sigma = pyro.sample('sigma', pdist.HalfNormal(1.))
+    alpha = pyro.sample('alpha', dist.Normal(0, 10))
+    beta = pyro.sample('beta',pdist.Normal(torch.zeros(2,), torch.ones(2,) * 10.))
+    sigma = pyro.sample('sigma', dist.HalfNormal(1.))
 
     # Expected value of outcome
     mu = alpha + beta[0] * x1 + beta[1] * x2
 
     # Likelihood (sampling distribution) of observations
-    return pyro.sample('y_obs', pdist.Normal(mu, sigma), obs=y)
+    return pyro.sample('y_obs', dist.Normal(mu, sigma), obs=y)
 ```
 
 ## Context-manager Syntax
