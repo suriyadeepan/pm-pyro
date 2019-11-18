@@ -70,3 +70,12 @@ def test_sample_posterior_predictive(normal_data, pm_trace, pm_model):
 
 def test_summary(pm_trace, pm_model):
   assert len(pm.summary(pm_trace)) == len(pm_model.free_variables())
+
+
+def test_variational(pm_model):
+  with pm_model:
+    vardist, elbo = pm.fit(epochs=10)
+    trace = pm.sample_variational(vardist, 10)
+    fvars = pm_model.free_variables()
+    assert len(trace) == len(fvars)
+    assert len(trace[fvars[0].name]) == 10
