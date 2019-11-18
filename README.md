@@ -17,22 +17,18 @@ python -m pytest pmpyro/tests.py
 
 ## Example
 
-### Data
-
 Borrowed this example from a [PyMC3 tutorial](https://docs.pymc.io/notebooks/getting_started.html). Outcome variables `Y` is dependent on 2 features `X_1` and `X_2`.
 
 ![](images/plot_data.png)
 
 
-### Model Specification
+## Model Specification
 
 We design a simple Bayesian Linear Regression model.
 
 ![](images/stfn.png)
 
-
-
-### Stochastic Function
+## Stochastic Function
 
 The model specification is implemented as a stochastic function.
 
@@ -49,7 +45,7 @@ def pyro_model(x1, x2, y):
     return pyro.sample('y_obs', pdist.Normal(mu, sigma), obs=y)
 ```
 
-### Context-manager Syntax
+## Context-manager Syntax
 
 The `pm_like` wrapper creates a PyMC3-esque `Model`. 
 We can use the context manager syntax for running inference.
@@ -68,7 +64,7 @@ with pm_like(pyro_model, X1, X2, Y) as model:
 sample: 100%|██████████| 1300/1300 [00:16, 80.42it/s, step size=7.49e-01, acc. prob=0.911] 
 ```
 
-### Traceplot
+## Traceplot
 
 We can visualize the samples using `traceplot`.
 Select random variables by passing them as a list via `var_names = [ 'alpha' ... ]` argument.
@@ -79,7 +75,7 @@ pm.traceplot(trace)
 
 ![](images/traceplot.png)
 
-### Plot Posterior
+## Plot Posterior
 
 Visualize posterior of random variables using `plot_posterior`.
 
@@ -89,7 +85,7 @@ pm.plot_posterior(trace, var_names=['beta'])
 
 ![](images/posterior_plot.png)
 
-### Posterior Predictive Samples
+## Posterior Predictive Samples
 
 We can sample from the posterior by running `plot_posterior_predictive` or `sample_posterior_predictive` with the same
 function signatures as the stochastic function `def pyro_model(x1, x2, y)`, replacing observed variable `Y` with `None`. 
@@ -104,7 +100,7 @@ ppc = pm.plot_posterior_predictive(X1, X2, None,
 ![](images/ppc2.png)
 
 
-### Trace Summary
+## Trace Summary
 
 The summary of random variables is available as a pandas array.
 
