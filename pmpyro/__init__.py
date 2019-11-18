@@ -1,5 +1,6 @@
 from pmpyro.inference import sample_posterior_predictive
-from pmpyro.inference import sample, summary
+from pmpyro.inference import sample_variational
+from pmpyro.inference import sample, summary, fit
 from pmpyro.model import pm_like
 from pmpyro.plots import traceplot, plot_posterior
 from pmpyro.plots import plot_posterior_predictive
@@ -11,5 +12,7 @@ __all__ = [
     pm_like,
     traceplot,
     plot_posterior,
-    plot_posterior_predictive
+    plot_posterior_predictive,
+    fit,
+    sample_variational
     ]
