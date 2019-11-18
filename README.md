@@ -1,30 +1,40 @@
 # pm-pyro
 
-PyMC3-like abstractions for pyro. 
+PyMC3-like abstractions for pyro's stochastic function.
+Define a model as a stochastic function in pyro.
+Use `pm_like` wrapper to create a PyMC3-esque `Model`.
+Random variables are exposed to user as attributes of `Model`.
+pm-pyro provides abstractions for inference (NUTS : No-U-Turn Sampler), trace plots, posterior plot and posterior predictive plots.
 
 
-## Setup
+## Install
 
 ```
 pip install pm-pyro
+# run tests
+python -m pytest pmpyro/tests.py
 ```
 
 ## Example
 
 ### Data
 
+Borrowed this example from a [PyMC3 tutorial](https://docs.pymc.io/notebooks/getting_started.html). Outcome variables `Y` is dependent on 2 features `X_1` and `X_2`.
 
 ![](images/plot_data.png)
 
 
 ### Model Specification
 
+We design a simple Bayesian Linear Regression model.
 
 ![](images/stfn.png)
 
 
 
 ### Stochastic Function
+
+The model specification is implemented as a stochastic function.
 
 ```python
 def pyro_model(x1, x2, y):
@@ -41,6 +51,11 @@ def pyro_model(x1, x2, y):
 
 ### Context-manager Syntax
 
+The `pm_like` wrapper creates a PyMC3-esque `Model`. 
+We can use the context manager syntax for running inference.
+`pm.sample` samples from the model using the NUTS sampler.
+The trace is a python dictionary which contains the samples.
+
 ```python
 from pmpyro import pm_like
 import pmpyro as pm
@@ -55,6 +70,9 @@ sample: 100%|██████████| 1300/1300 [00:16, 80.42it/s, step s
 
 ### Traceplot
 
+We can visualize the samples using `traceplot`.
+Select random variables by passing them as a list via `var_names = [ 'alpha' ... ]` argument.
+
 ```python
 pm.traceplot(trace)
 ```
@@ -63,6 +81,8 @@ pm.traceplot(trace)
 
 ### Plot Posterior
 
+Visualize posterior of random variables using `plot_posterior`.
+
 ```python
 pm.plot_posterior(trace, var_names=['beta'])
 ```
@@ -70,6 +90,9 @@ pm.plot_posterior(trace, var_names=['beta'])
 ![](images/posterior_plot.png)
 
 ### Posterior Predictive Samples
+
+We can sample from the posterior by running `plot_posterior_predictive` or `sample_posterior_predictive` with the same
+function signatures as the stochastic function `def pyro_model(x1, x2, y)`, replacing observed variable `Y` with `None`. 
 
 ```python
 ppc = pm.plot_posterior_predictive(X1, X2, None,
@@ -83,8 +106,15 @@ ppc = pm.plot_posterior_predictive(X1, X2, None,
 
 ### Trace Summary
 
+The summary of random variables is available as a pandas array.
+
 ```python
 pm.summary()
 ```
 
 ![](images/trace_summary.png)
+
+
+## License
+
+This project is licensed under the GPL v3 License - see the [LICENSE.md](LICENSE.md) file for details
