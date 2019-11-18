@@ -124,7 +124,7 @@ def fit(model=None, lr=1e-2, epochs=10000, autoguide=None):
       elbo.append(step_loss)
 
   # get variational distribution
-  vardist = guide.posterior()
+  vardist = guide.get_posterior()
   return vardist, elbo
 
 
