@@ -32,6 +32,7 @@ We design a simple Bayesian Linear Regression model.
 
 The model specification is implemented as a stochastic function.
 
+
 ```python
 import pyro.distributions as dist
 import pyro

@@ -2,4 +2,6 @@ binaries/
 *.svg
 notebooks/
 __pycache__
-
+build/
+dist/
+pm_pyro.egg-info/
