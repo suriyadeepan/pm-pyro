@@ -1,0 +1,7 @@
+pyro-ppl
+tqdm
+pytest
+torch
+pymc3
+matplotlib
+arviz
