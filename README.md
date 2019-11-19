@@ -1,7 +1,5 @@
 ![](images/logo-medium.png)
 
-#
-
 PyMC3-like abstractions for pyro's stochastic function.
 Define a model as a stochastic function in pyro.
 Use `pm_like` wrapper to create a PyMC3-esque `Model`.
