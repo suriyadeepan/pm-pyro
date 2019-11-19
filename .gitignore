@@ -6,3 +6,4 @@ build/
 dist/
 pm_pyro.egg-info/
 .eggs/
+venv/
