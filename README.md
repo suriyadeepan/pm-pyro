@@ -9,10 +9,18 @@ pm-pyro provides abstractions for inference (NUTS : No-U-Turn Sampler), trace pl
 
 ## Install
 
+Install from pypi
+
 ```bash
+pip install pm-pyro
+```
+
+Developer setup
+```bash
+# install requirements
+pip install -r requirements-dev.txt
 # run tests
 python -m pytest pmpyro/tests.py
-pip install pm-pyro
 ```
 
 ## Example
