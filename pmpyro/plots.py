@@ -4,6 +4,7 @@ Tools for managing and plotting traces.
 """
 from pmpyro.inference import sample_posterior_predictive
 from pmpyro.inference import disentangle_trace
+from pmpyro.model import PmlikeModel as Context
 from pmpyro.tensor_ops import *
 
 import matplotlib.patches as mpatches
