@@ -28,7 +28,7 @@ python -m pytest pmpyro/tests.py
 
 ## Example
 
-Borrowed this example from a [PyMC3 tutorial](https://docs.pymc.io/notebooks/getting_started.html). Outcome variables `Y` is dependent on 2 features `X_1` and `X_2`. The notebook for this example is available [here](notebooks/motivating-example.ipynb)
+Borrowed the example from a [PyMC3 tutorial](https://docs.pymc.io/notebooks/getting_started.html). The outcome variable `Y` is dependent on 2 features `X_1` and `X_2`. The notebook for this example is available [here](notebooks/motivating-example.ipynb)
 
 ![](images/plot_data.png)
 
