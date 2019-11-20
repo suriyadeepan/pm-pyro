@@ -104,7 +104,7 @@ def plot_posterior_predictive(*args, **kwargs):
   obs = kwargs.get('obs', {})
   # remove alpha and obs from kwargs
   #  before passing to `sample_posterior_predictive`
-  kwargs = { k : kwargs[k] for k in kwargs if k not in ['obs', 'alpha'] }
+  kwargs = { k : kwargs[k] for k in kwargs if k not in ['obs', 'alpha', 'ppc'] }
   if kwargs.get('model') is None:  # get model from context if necessary
     model = Context.get_context()
   if len(args) == 0:   # if no explicit samples are given:
@@ -116,15 +116,25 @@ def plot_posterior_predictive(*args, **kwargs):
     pvar = ppc[pname]
     for i, var in enumerate(list(args)):
       if var is not None:  # filter-out `None`
-        if var.dim() != 1 or pvar.dim() != 2:
-          raise Exception('Only scalars allowed!')
+        #if var.dim() != 1 or pvar.dim() != 2:
+        #  raise Exception('Only scalars allowed!')
+        if var.dim() > 1:
+          vvars = expand_feature(var, pvar.size(1))
+          # print('vvars size : ', len(vvars))
+        else:
+          vvars = [var]
         plt.ylabel(pname, fontsize=12)
         plt.xlabel(f'x_{i}', fontsize=12)
-        for pvar_t in pvar:
-          plt.scatter(var, pvar_t, c=PYRO_ORANGE, alpha=alpha)
-        if pname in obs:
-          plt.scatter(var, obs[pname], c=PM_BLUE, alpha=min(0.65, 30.*alpha))
-        make_ppc_legend()
-        plt.figure()
+        for vvar in vvars:
+          for pvar_t in pvar:
+            # print('Observations : ', vvar.size())
+            # print('pvar', pname, pvar_t, pvar_t.size())
+            # print(f'plotting {vvar.size()} vs {pvar_t.size()}')
+            plt.scatter(vvar, pvar_t, c=PYRO_ORANGE, alpha=alpha)
+          if pname in obs:
+            # print(f'(2) plotting {vvar.size()} vs {obs[pname].size()}')
+            plt.scatter(vvar, obs[pname], c=PM_BLUE, alpha=min(0.65, 30.*alpha))
+          make_ppc_legend()
+          plt.figure()
   # return posterior predictive samples
   return ppc

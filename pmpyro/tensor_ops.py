@@ -28,3 +28,18 @@ def var_dim(var):
   if len(shape) > 1:
     raise Exception(f'Cannot handle high-dimensional variable {var}')
   return shape[0]
+
+
+def tensor_trace(trace):
+  """Convert trace into torch tensors"""
+  return { var : to_tensor(trace[var])[0] for var in trace }
+
+
+def expand_feature(X, batch_size):
+  if X.dim() > 2:
+    raise Exception(
+        f'X.dims() is expected to be < 2; instead got "{X.dim()}"')
+  if X.size(0) != batch_size:
+    raise Exception(
+        f'X.size(0) is expected to be {batch_size} instead of "{X.size(0)}"')
+  return torch.unbind(X, 1)
