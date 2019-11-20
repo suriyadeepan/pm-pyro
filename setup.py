@@ -4,7 +4,7 @@ setup(
     long_description_content_type='text/markdown',
     name='pm-pyro',
     author='Suriyadeepan Ramamoorthy',
-    version='0.3.2',
+    version='0.3.3',
     packages=['pmpyro'],
     python_requires='>=3.5',
     url='https://github.com/suriyadeepan/pm-pyro',

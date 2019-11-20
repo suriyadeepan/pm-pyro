@@ -34,7 +34,7 @@ mpl.rcParams['axes.labelcolor'] = PM_GRAY
 mpl.rcParams['xtick.color'] = PM_GRAY
 mpl.rcParams['ytick.color'] = PM_GRAY
 # set default figure size
-mpl.rcParams['figure.figsize'] = (10.0, 8.0)
+# mpl.rcParams['figure.figsize'] = (10.0, 8.0)
 
 
 def resolve_var_names(var_names, trace, vectors):
