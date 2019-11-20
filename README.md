@@ -4,7 +4,7 @@ PyMC3-like abstractions for pyro's stochastic function.
 Define a model as a stochastic function in pyro.
 Use `pm_like` wrapper to create a PyMC3-esque `Model`.
 Random variables are exposed to user as attributes of `Model`.
-pm-pyro provides abstractions for inference (NUTS : No-U-Turn Sampler), trace plots, posterior plot and posterior predictive plots.
+pm-pyro provides abstractions for sampling-based inference methods (NUTS - The No-U-Turn Sampler, HMC - Hamiltonion Monte Carlo), as well as Variational Inference (SVI with autoguides), trace plots, posterior plot and posterior predictive plots.
 
 <p align="center">
   <img src="images/pmpyro-demo.gif">
